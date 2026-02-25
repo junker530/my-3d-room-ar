@@ -4,6 +4,7 @@ import './App.css';
 
 function App() {
   const viewerRef = useRef(null);
+  const modelSrc = `${import.meta.env.BASE_URL}room.glb?disable_occlusion=false`;
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -42,9 +43,9 @@ function App() {
     <div className="viewer-container">
       <model-viewer
         ref={viewerRef}
-        src={`${import.meta.env.BASE_URL}room.glb`}
+        src={modelSrc}
         ar
-        ar-modes="webxr scene-viewer quick-look"
+        ar-modes="scene-viewer webxr quick-look"
         ar-placement="floor"
         ar-scale="auto"
         camera-controls
