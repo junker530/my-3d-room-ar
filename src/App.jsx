@@ -1,61 +1,27 @@
-import { useRef, useEffect } from 'react';
 import '@google/model-viewer';
 import './App.css';
 
 function App() {
-  const viewerRef = useRef(null);
-  const modelSrc = `${import.meta.env.BASE_URL}room.glb?disable_occlusion=false`;
-
-  useEffect(() => {
-    const viewer = viewerRef.current;
-    
-    const handleLoad = () => {
-      const materials = viewer.model?.materials;
-      if (materials) {
-        materials.forEach(material => {
-          // 1. 裏面も描画する（前回追加した部分）
-          material.doubleSided = true;
-
-          // 2. 【今回追加】透過モードを「完全不透明（OPAQUE）」に強制設定
-          // これにより、半透明な部分がなくなり、背景が透けなくなります
-          material.setAlphaMode('OPAQUE');
-          
-          // 3. 【念のため追加】ベースカラーの透明度を1.0（不透明）にする
-          if (material.pbrMetallicRoughness.baseColorFactor) {
-            material.pbrMetallicRoughness.baseColorFactor[3] = 1.0;
-          }
-        });
-      }
-    };
-
-    if (viewer) {
-      viewer.addEventListener('load', handleLoad);
-    }
-
-    return () => {
-      if (viewer) {
-        viewer.removeEventListener('load', handleLoad);
-      }
-    };
-  }, []);
-
   return (
     <div className="viewer-container">
       <model-viewer
-        ref={viewerRef}
-        src={modelSrc}
+        src={`${import.meta.env.BASE_URL}room.glb`}
+        /* --- ここからARの設定 --- */
         ar
-        ar-modes="scene-viewer webxr quick-look"
-        ar-placement="floor"
-        ar-scale="auto"
+        ar-modes="webxr scene-viewer quick-look"
+        ar-placement="floor" /* 平面（床）を検出 */
+        ar-scale="auto"      /* 現実のサイズを維持 */
+        /* ----------------------- */
         camera-controls
-        shadow-intensity="1" // 影を濃くして存在感を出す
+        shadow-intensity="1"
         alt="Scaniverse 3D Room"
       >
-        {/* ... ボタンなどはそのまま ... */}
+        {/* ARモードを起動するボタン */}
         <button slot="ar-button" className="ar-button">
           ARで部屋を配置する
         </button>
+
+        {/* AR中のガイドテキスト（Android用） */}
         <div slot="ar-prompt">
           <p className="ar-prompt-text">床を写して平面を検出し、タップで配置</p>
           <p className="ar-prompt-subtext">別の場所をタップすると再配置（リセット）されます</p>
